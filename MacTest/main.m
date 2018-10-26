@@ -133,7 +133,8 @@ void func3()
     //貌似没什么要注意的了用block
 }
 
-
+//其实自定义的协议继承自JSExport后,也可以让controller实现这个协议,把controller这个对象
+//放入jsContext中 self.jsContext[@"xxx"] = self;
 void func4()  //使用JSExport协议  让OC的类可以在JS中被调用。也就是可以引用这个类的方法了
 {
     JSContext * ctx = [[JSContext alloc]init];
@@ -147,6 +148,28 @@ void func4()  //使用JSExport协议  让OC的类可以在JS中被调用。也�
 
     //测试 让JS执行这个类，然后调用这个类
     [ctx evaluateScript:@"objc_js.printAllItProperty()"];
+    
+}
+
+//该方法中的内容是:如何获取webView加载完网页后中的jsContext(执行js的上下文)
+//关键点在于[webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
+void func5(){
+    //该方法需要在- (void)webViewDidFinishLoad:(UIWebView *)webView 中执行
+    /*
+    self.jsContext = [webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
+  // 通过模型调用方法，这种方式更好些。
+  HYBJsObjCModel *model  = [[HYBJsObjCModel alloc] init];
+  // 模型
+  self.jsContext[@"OCModel"] = model;
+  model.jsContext = self.jsContext;
+  model.webView = self.webView;
+  // 增加异常的处理
+  self.jsContext.exceptionHandler = ^(JSContext *context,   
+ JSValue *exceptionValue) {
+    context.exception = exceptionValue;
+    NSLog(@"异常信息：%@", exceptionValue);
+ };
+    */
     
 }
 
